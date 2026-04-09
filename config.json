@@ -1,0 +1,8 @@
+{
+    "quality": "1080p",
+    "language": "DUB",
+    "download_folder": "C:\\Users\\User\\Downloads\\Anime",
+    "source": "animepahe",
+    "external_downloader": false,
+    "max_threads": 5
+}

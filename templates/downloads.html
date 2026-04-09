@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloads - Anime Batch Downloader</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">🏠 Home</a>
+        <a href="/search">🔍 Search</a>
+        <a href="/source">📡 Source</a>
+        <a href="/settings">⚙️ Settings</a>
+        <a href="/downloads">📥 Downloads</a>
+    </nav>
+    <div class="container">
+        <h1 style="margin-bottom: 2rem;">📥 Download Information</h1>
+        
+        <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+            <h3>📁 Folder Structure</h3>
+            <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; margin-top: 1rem; font-family: monospace; font-size: 0.85rem;">
+                C:\Users\User\Downloads\Anime\<br>
+                &nbsp;&nbsp;├── Attack on Titan\<br>
+                &nbsp;&nbsp;│&nbsp;&nbsp;├── Attack_on_Titan_Episodes_1-12.zip<br>
+                &nbsp;&nbsp;│&nbsp;&nbsp;└── Attack_on_Titan_Episodes_13-25.zip<br>
+                &nbsp;&nbsp;├── Naruto\<br>
+                &nbsp;&nbsp;│&nbsp;&nbsp;└── Naruto_Episodes_1-50.zip<br>
+                &nbsp;&nbsp;└── One Piece\<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── One_Piece_Episodes_1-100.zip
+            </div>
+        </div>
+        
+        <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+            <h3>📝 Naming Convention</h3>
+            <ul style="color: var(--text-secondary); margin-top: 1rem; margin-left: 1.5rem;">
+                <li>ZIP files: <strong>Anime_Name_Episodes_X-Y.zip</strong></li>
+                <li>Inside ZIP: <strong>Episode_001.mp4, Episode_002.mp4, etc.</strong></li>
+                <li>Auto-created folders: <strong>Downloads/Anime/Anime-Name/</strong></li>
+                <li>Missing episodes: <strong>Episode_XXX_MISSING.txt</strong> (if download fails)</li>
+            </ul>
+        </div>
+        
+        <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+            <h3>💡 Smart Download Features</h3>
+            <ul style="color: var(--text-secondary); margin-top: 1rem; margin-left: 1.5rem;">
+                <li>✅ <strong>Auto Language Fallback:</strong> If DUB is not available, SUB is downloaded automatically</li>
+                <li>✅ <strong>Multi-threaded Downloads:</strong> Download multiple episodes simultaneously for maximum speed</li>
+                <li>✅ <strong>Retry on Failure:</strong> Automatically retries failed downloads up to 3 times</li>
+                <li>✅ <strong>Organized Storage:</strong> Each anime gets its own dedicated folder</li>
+                <li>✅ <strong>Progress Tracking:</strong> Real-time download progress for each batch</li>
+                <li>✅ <strong>Cloudflare Bypass:</strong> Successfully bypasses Cloudflare protection</li>
+                <li>✅ <strong>Rich Terminal Output:</strong> Beautiful progress bars in the console</li>
+            </ul>
+        </div>
+        
+        <div id="downloadsList">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Checking for active downloads...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function checkDownloads() {
+            const downloadsList = document.getElementById('downloadsList');
+            
+            downloadsList.innerHTML = `
+                <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; text-align: center;">
+                    <p style="color: var(--text-secondary);">📦 No active downloads at the moment</p>
+                    <p style="color: var(--text-secondary); margin-top: 1rem;">Go to <a href="/search" style="color: var(--accent);">Search</a> to find anime to download</p>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Completed downloads appear as ZIP files in: <strong>C:\\Users\\User\\Downloads\\Anime\\Anime-Name\\</strong></p>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">💡 Check the terminal/console for detailed download progress</p>
+                </div>
+            `;
+        }
+        
+        checkDownloads();
+    </script>
+</body>
+</html>

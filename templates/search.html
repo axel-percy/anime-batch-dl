@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Anime - Anime Batch Downloader</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">🏠 Home</a>
+        <a href="/search">🔍 Search</a>
+        <a href="/source">📡 Source</a>
+        <a href="/settings">⚙️ Settings</a>
+        <a href="/downloads">📥 Downloads</a>
+    </nav>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search for anime... (e.g., Fire Force, One Piece, Naruto, Attack on Titan)">
+        </div>
+        
+        <div id="sourceInfo" style="text-align: center; margin: 1rem 0; padding: 0.5rem; background: var(--bg-card); border-radius: 8px;"></div>
+        
+        <div id="results" class="results-grid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Start typing to search...</p>
+            </div>
+        </div>
+        
+        <div id="debugInfo" style="margin-top: 2rem; padding: 1rem; background: var(--bg-card); border-radius: 8px; display: none;">
+            <h4>Debug Information</h4>
+            <pre id="debugOutput" style="color: var(--text-secondary); font-size: 0.8rem; overflow-x: auto;"></pre>
+        </div>
+    </div>
+    <script>
+        let searchTimeout;
+        let currentSource = 'animepahe';
+        
+        const searchInput = document.getElementById('searchInput');
+        const resultsDiv = document.getElementById('results');
+        const sourceInfo = document.getElementById('sourceInfo');
+        const debugDiv = document.getElementById('debugInfo');
+        const debugOutput = document.getElementById('debugOutput');
+        
+        async function getCurrentSource() {
+            try {
+                const response = await fetch('/api/source/current');
+                if (response.ok) {
+                    const data = await response.json();
+                    currentSource = data.source;
+                    if (currentSource === 'animepahe') {
+                        sourceInfo.innerHTML = `🔍 Currently searching from: <strong>AnimePahe</strong> (kwik download links) | Domains: animepahe.com, .org, .pw`;
+                        sourceInfo.style.color = 'var(--success)';
+                    } else if (currentSource === 'animekai') {
+                        sourceInfo.innerHTML = `🔍 Currently searching from: <strong>AniKai</strong> (megaup.cc download links)`;
+                        sourceInfo.style.color = 'var(--success)';
+                    }
+                }
+            } catch (error) {
+                console.error('Error getting source:', error);
+                sourceInfo.innerHTML = `🔍 Source: AnimePahe`;
+            }
+        }
+        
+        searchInput.addEventListener('input', async () => {
+            clearTimeout(searchTimeout);
+            const query = searchInput.value.trim();
+            
+            if (query.length === 0) {
+                resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Start typing to search...</p></div>';
+                debugDiv.style.display = 'none';
+                return;
+            }
+            
+            if (query.length < 2) {
+                resultsDiv.innerHTML = '<div class="loading"><p>Type at least 2 characters...</p></div>';
+                debugDiv.style.display = 'none';
+                return;
+            }
+            
+            searchTimeout = setTimeout(async () => {
+                resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Searching for "' + escapeHtml(query) + '"...</p></div>';
+                debugDiv.style.display = 'none';
+                
+                try {
+                    const startTime = Date.now();
+                    const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&source=${currentSource}`);
+                    const endTime = Date.now();
+                    
+                    debugOutput.innerHTML = `Request time: ${endTime - startTime}ms\nStatus: ${response.status}\n`;
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    debugOutput.innerHTML += `Results found: ${data.length}\n`;
+                    
+                    if (!data || data.length === 0) {
+                        resultsDiv.innerHTML = `<div class="loading">
+                            <p>❌ No results found for "${escapeHtml(query)}".</p>
+                            <p style="font-size: 0.9rem; margin-top: 1rem;">💡 Tips:</p>
+                            <ul style="text-align: left; display: inline-block; margin-top: 0.5rem;">
+                                <li>Try a shorter search term (e.g., "Fire" instead of "Fire Force")</li>
+                                <li>Try searching with the Japanese title</li>
+                                <li>Try a different spelling</li>
+                                <li>Check your internet connection</li>
+                                <li>If using AnimePahe, make sure the site is accessible</li>
+                            </ul>
+                        </div>`;
+                        debugDiv.style.display = 'block';
+                        return;
+                    }
+                    
+                    debugDiv.style.display = 'none';
+                    resultsDiv.innerHTML = data.map(anime => `
+                        <div class="anime-card" onclick="location.href='/details/${anime.id}?source=${currentSource}'">
+                            <img src="${anime.thumbnail || 'https://via.placeholder.com/220x310?text=No+Image'}" onerror="this.src='https://via.placeholder.com/220x310?text=No+Image'">
+                            <h3>${escapeHtml(anime.title)}</h3>
+                            ${anime.year ? `<small style="display: block; text-align: center; color: var(--text-secondary); margin-bottom: 10px;">${anime.year} • ${anime.type || 'TV'}</small>` : ''}
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error('Search error:', error);
+                    debugOutput.innerHTML += `Error: ${error.message}\n`;
+                    debugDiv.style.display = 'block';
+                    resultsDiv.innerHTML = `<div class="loading"><p>❌ Error searching: ${error.message}. Please check your internet connection and try again.</p></div>`;
+                }
+            }, 500);
+        });
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        getCurrentSource();
+    </script>
+</body>
+</html>

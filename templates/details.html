@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ anime.title }} - Anime Details</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">🏠 Home</a>
+        <a href="/search">🔍 Search</a>
+        <a href="/source">📡 Source</a>
+        <a href="/settings">⚙️ Settings</a>
+        <a href="/downloads">📥 Downloads</a>
+    </nav>
+    <div class="container">
+        <div class="details-container">
+            <div class="thumbnail">
+                <img src="{{ anime.thumbnail }}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'" alt="{{ anime.title }}">
+            </div>
+            <div class="info">
+                <h1>{{ anime.title }}</h1>
+                {% if anime.score and anime.score != 'N/A' %}
+                <p><strong>⭐ Score:</strong> {{ anime.score }}</p>
+                {% endif %}
+                {% if anime.type and anime.type != 'Unknown' %}
+                <p><strong>📺 Type:</strong> {{ anime.type }}</p>
+                {% endif %}
+                {% if anime.status and anime.status != 'Unknown' %}
+                <p><strong>📊 Status:</strong> {{ anime.status }}</p>
+                {% endif %}
+                <div class="genres">
+                    {% for genre in anime.genres %}
+                        <span class="genre-tag">{{ genre }}</span>
+                    {% endfor %}
+                </div>
+                <p><strong>📅 Air Date:</strong> {{ anime.air_date }}</p>
+                <div class="description">
+                    <strong>📝 Description:</strong>
+                    <p>{{ anime.description }}</p>
+                </div>
+                <button class="btn" onclick="location.href='/select/{{ anime_id }}'">🎬 Select Episodes →</button>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; background: var(--bg-card); padding: 1rem; border-radius: 12px;">
+            <p style="color: var(--text-secondary); font-size: 0.85rem;">
+                💡 <strong>Note:</strong> If DUB is selected in settings but not available for an episode, SUB will be downloaded automatically.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

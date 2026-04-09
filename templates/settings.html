@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Anime Batch Downloader</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">🏠 Home</a>
+        <a href="/search">🔍 Search</a>
+        <a href="/source">📡 Source</a>
+        <a href="/settings">⚙️ Settings</a>
+        <a href="/downloads">📥 Downloads</a>
+    </nav>
+    <div class="container">
+        <div class="settings-panel">
+            <h2>⚙️ Application Settings</h2>
+            
+            <form id="settingsForm">
+                <div class="setting-group">
+                    <label>🎬 Default Quality</label>
+                    <select name="quality" id="quality">
+                        <option value="1080p">1080p (Full HD) - Best Quality</option>
+                        <option value="720p">720p (HD) - Recommended</option>
+                        <option value="480p">480p (SD) - Smaller Size</option>
+                        <option value="360p">360p (Low) - Fast Download</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label>🔊 Language Preference</label>
+                    <select name="language" id="language">
+                        <option value="DUB">DUB (Dubbed) - English Voice Over</option>
+                        <option value="SUB">SUB (Subtitled) - Original Audio + English Subs</option>
+                    </select>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.25rem;">
+                        💡 If DUB is selected but not available for an episode, SUB will be downloaded automatically
+                    </small>
+                </div>
+                
+                <div class="setting-group">
+                    <label>📁 Download Folder</label>
+                    <input type="text" name="download_folder" id="download_folder" placeholder="C:\Users\User\Downloads\Anime">
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.25rem;">
+                        Anime will be saved in subfolders: [Folder]/Anime-Name/
+                    </small>
+                </div>
+                
+                <div class="setting-group">
+                    <label>⚡ Max Concurrent Downloads</label>
+                    <select name="max_threads" id="max_threads">
+                        <option value="3">3 (Slow - Safe for slow connections)</option>
+                        <option value="5">5 (Recommended for most users)</option>
+                        <option value="10">10 (Fast - Good for high-speed internet)</option>
+                        <option value="15">15 (Extreme - May cause connection issues)</option>
+                    </select>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.25rem;">
+                        Number of episodes downloaded simultaneously
+                    </small>
+                </div>
+                
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" name="external_downloader" id="external_downloader">
+                        Use External Downloader (IDM)
+                    </label>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.25rem;">
+                        Creates ZIP file first, then you can download with IDM
+                    </small>
+                </div>
+                
+                <button type="submit" class="btn">💾 Save Settings</button>
+            </form>
+            
+            <div id="message" style="margin-top: 1rem; text-align: center;"></div>
+        </div>
+        
+        <div style="margin-top: 2rem; background: var(--bg-card); padding: 1.5rem; border-radius: 16px;">
+            <h3>📊 Current Configuration</h3>
+            <div style="margin-top: 1rem;" id="configDisplay">
+                <p><strong>Quality:</strong> <span id="currentQuality">Loading...</span></p>
+                <p><strong>Language:</strong> <span id="currentLanguage">Loading...</span></p>
+                <p><strong>Download Folder:</strong> <span id="currentFolder">Loading...</span></p>
+                <p><strong>Max Threads:</strong> <span id="currentThreads">Loading...</span></p>
+                <p><strong>External Downloader:</strong> <span id="currentExternal">Loading...</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Default values in case API fails
+        const defaultConfig = {
+            quality: '1080p',
+            language: 'DUB',
+            download_folder: 'C:\\Users\\User\\Downloads\\Anime',
+            max_threads: 5,
+            external_downloader: false
+        };
+        
+        let currentConfig = defaultConfig;
+        
+        // Function to load settings from server
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/settings');
+                if (response.ok) {
+                    currentConfig = await response.json();
+                } else {
+                    console.warn('Failed to load settings, using defaults');
+                    currentConfig = defaultConfig;
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                currentConfig = defaultConfig;
+            }
+            
+            // Apply loaded settings to form
+            applySettingsToForm();
+        }
+        
+        // Function to apply settings to form elements
+        function applySettingsToForm() {
+            // Set form values
+            const qualitySelect = document.getElementById('quality');
+            const languageSelect = document.getElementById('language');
+            const folderInput = document.getElementById('download_folder');
+            const threadsSelect = document.getElementById('max_threads');
+            const externalCheckbox = document.getElementById('external_downloader');
+            
+            if (qualitySelect) qualitySelect.value = currentConfig.quality || '1080p';
+            if (languageSelect) languageSelect.value = currentConfig.language || 'DUB';
+            if (folderInput) folderInput.value = currentConfig.download_folder || 'C:\\Users\\User\\Downloads\\Anime';
+            if (threadsSelect) threadsSelect.value = currentConfig.max_threads || 5;
+            if (externalCheckbox) externalCheckbox.checked = currentConfig.external_downloader || false;
+            
+            // Update display spans
+            updateDisplaySpans();
+        }
+        
+        // Function to update the display spans
+        function updateDisplaySpans() {
+            const qualitySpan = document.getElementById('currentQuality');
+            const languageSpan = document.getElementById('currentLanguage');
+            const folderSpan = document.getElementById('currentFolder');
+            const threadsSpan = document.getElementById('currentThreads');
+            const externalSpan = document.getElementById('currentExternal');
+            
+            if (qualitySpan) qualitySpan.textContent = currentConfig.quality || '1080p';
+            if (languageSpan) languageSpan.textContent = currentConfig.language === 'DUB' ? 'Dubbed' : 'Subtitled';
+            if (folderSpan) folderSpan.textContent = currentConfig.download_folder || 'C:\\Users\\User\\Downloads\\Anime';
+            if (threadsSpan) threadsSpan.textContent = currentConfig.max_threads || 5;
+            if (externalSpan) externalSpan.textContent = currentConfig.external_downloader ? 'Yes' : 'No';
+        }
+        
+        // Save settings function
+        async function saveSettings(settings) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Saving...</p></div>';
+            
+            try {
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(settings)
+                });
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '<p style="color: var(--success);">✅ Settings saved successfully!</p>';
+                    // Update current config
+                    currentConfig = settings;
+                    updateDisplaySpans();
+                    setTimeout(() => {
+                        messageDiv.innerHTML = '';
+                    }, 3000);
+                } else {
+                    messageDiv.innerHTML = '<p style="color: var(--error);">❌ Failed to save settings</p>';
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                messageDiv.innerHTML = '<p style="color: var(--error);">❌ Error saving settings</p>';
+            }
+        }
+        
+        // Form submission handler
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const settings = {
+                quality: document.getElementById('quality').value,
+                language: document.getElementById('language').value,
+                download_folder: document.getElementById('download_folder').value,
+                max_threads: parseInt(document.getElementById('max_threads').value),
+                external_downloader: document.getElementById('external_downloader').checked
+            };
+            
+            await saveSettings(settings);
+        });
+        
+        // Load settings when page loads
+        loadSettings();
+    </script>
+</body>
+</html>

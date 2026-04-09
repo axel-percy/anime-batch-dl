@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Batch Downloader - Download Anime Episodes in Bulk</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">🏠 Home</a>
+        <a href="/search">🔍 Search</a>
+        <a href="/source">📡 Source</a>
+        <a href="/settings">⚙️ Settings</a>
+        <a href="/downloads">📥 Downloads</a>
+    </nav>
+    <div class="container">
+        <div class="hero">
+            <h1>🎬 Anime Batch Downloader</h1>
+            <p>Download entire anime seasons in one click. Fast, modern, and easy to use.</p>
+            <div style="margin-top: 2rem;">
+                <a href="/search" class="btn btn-large">Start Searching →</a>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+            <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px;">
+                <h3>🚀 Batch Download</h3>
+                <p style="color: var(--text-secondary);">Download multiple episodes at once and get them in a single ZIP file.</p>
+            </div>
+            <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px;">
+                <h3>🎯 Multiple Sources</h3>
+                <p style="color: var(--text-secondary);">Choose from AnimePahe (kwik links) and AniKai (megaup.cc links).</p>
+            </div>
+            <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px;">
+                <h3>⚡ Fast Downloads</h3>
+                <p style="color: var(--text-secondary);">Multi-threaded downloading for maximum speed.</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; background: var(--bg-card); padding: 1.5rem; border-radius: 16px;">
+            <h3>📁 Download Location</h3>
+            <p style="color: var(--text-secondary);">Files are saved to: <strong>C:\Users\User\Downloads\Anime\Anime-Name\</strong></p>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Each anime gets its own folder with organized episodes.</p>
+        </div>
+        
+        <div style="margin-top: 2rem; background: var(--bg-card); padding: 1.5rem; border-radius: 16px;">
+            <h3>✨ Features</h3>
+            <ul style="color: var(--text-secondary); margin-top: 1rem; margin-left: 1.5rem;">
+                <li>✅ Automatic DUB to SUB fallback if DUB not available</li>
+                <li>✅ Multi-threaded downloads for maximum speed</li>
+                <li>✅ Cloudflare bypass using cloudscraper & selenium</li>
+                <li>✅ Beautiful terminal progress display with Rich library</li>
+                <li>✅ Random user agents to avoid blocking</li>
+                <li>✅ Async HTTP requests with httpx</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
